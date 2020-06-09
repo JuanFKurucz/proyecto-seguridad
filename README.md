@@ -18,6 +18,7 @@ To run the bot first install the dependencies with
 
 ```
 pip install -r requirements.txt
+alembic upgrade head
 ```
 
 And run with
