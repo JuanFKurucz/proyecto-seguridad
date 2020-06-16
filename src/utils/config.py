@@ -6,4 +6,4 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-PASSWORD_SALT = "123"
+PASSWORD_SALT = "123"  # Example, we should change this later

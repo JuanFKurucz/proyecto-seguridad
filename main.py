@@ -1,25 +1,4 @@
-from src.database.models.user import User  # noqa
-from src.database.session import db_session  # noqa
-from src.utils.security import hash_pass
-
-
-def login(username, password):
-    user = db_session.query(User).filter(User.usuario == username).first()
-    if user and user.check_password(password=password):
-        return user
-    return None
-
-
-def sign_up(username, email, password):
-    user = User(usuario=username, email=email, hashed_password=hash_pass(password))
-    try:
-        db_session.add(user)
-        db_session.commit()
-        db_session.flush()
-        return user
-    except:
-        db_session.rollback()
-        return None
+from src.crud.user import create_user, connect_user
 
 
 def ask(text):
@@ -36,7 +15,7 @@ def menu(logged_user=None):
         if opcion == "1":
             username = ask("Ingrese su usuario")
             password = ask("Ingrese su contraseña")
-            user = login(username, password)
+            user = connect_user(username, password)
             if user:
                 return menu(user)
             else:
@@ -49,7 +28,7 @@ def menu(logged_user=None):
                 password = ask("Ingrese su contraseña")
                 if ask("Ingrese su contraseña denuevo") == password:
                     break
-            user = sign_up(username, email, password)
+            user = create_user(username, email, password)
             if user:
                 return menu(user)
             else:
@@ -57,10 +36,6 @@ def menu(logged_user=None):
     return menu(logged_user)
 
 
-def run():
+if __name__ == "__main__":
     print("Bienvenido al software")
     menu()
-
-
-if __name__ == "__main__":
-    run()
