@@ -7,6 +7,7 @@ from src.crud.user import (
     decrypt_user_file,
     check_token_user,
 )
+from src.utils.policies import validate_email, validate_password
 
 
 def clear_screen():
@@ -56,12 +57,31 @@ def menu(logged_user=None):
                 print("Intento de conexion fallida")
         elif opcion == "2":
             username = ask("Ingrese su usuario")
-            email = ask("Ingrese su email")
+            email = None
+            while True:
+                email = ask("Ingrese su email")
+                if validate_email(email):
+                    break
+                else:
+                    print("El email no es valido")
+            print(
+                """
+La contraseña debe tener:
+- Un largo de 8 a 32 caracteres
+- 2 letras en mayuscula
+- 1 caracter especial !@#$&*
+- 2 numerales 0-9
+- 3 letras en minuscula
+"""
+            )
             password = None
             while True:
                 password = ask("Ingrese su contraseña")
-                if ask("Ingrese su contraseña denuevo") == password:
-                    break
+                if validate_password(password):
+                    if ask("Ingrese su contraseña denuevo") == password:
+                        break
+                else:
+                    print("La contraseña no cumple con las politicas de seguridad")
             user = create_user(username, email, password)
             if user:
                 return menu(user)
