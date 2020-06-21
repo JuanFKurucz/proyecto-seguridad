@@ -20,6 +20,8 @@ def decrypt_text(key: bytes, nonce: bytes, ciphertext: bytes, mac: bytes):
         return plaintext
     except ValueError:
         print("Error al desencriptar, clave no correcta")
+    except Exception:
+        print("Error inesperado")
     return None
 
 
@@ -29,6 +31,10 @@ def encrypt_file(key, path):
             return encrypy_text(key=key, text=file_in.read())
     except FileNotFoundError:
         print("No se encontro la ruta especificada")
+    except PermissionError:
+        print("Error se necesitan permisos de administrador para ejecutar el programa")
+    except Exception:
+        print("Error inesperado")
     return None, None, None
 
 
@@ -41,4 +47,8 @@ def decrypt_file(key, file: File, path_out):
                 file_out.close()
     except FileNotFoundError:
         print("No se encontro la ruta especificada")
+    except PermissionError:
+        print("Error se necesitan permisos de administrador para ejecutar el programa")
+    except Exception:
+        print("Error inesperado")
 

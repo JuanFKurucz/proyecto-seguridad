@@ -89,6 +89,9 @@ def menu(logged_user=None):
     except TimeoutOccurred:
         print("\nSe ha desconectado del programa por inactividad")
         quit()
+    except Exception:
+        print("Error inesperado")
+        menu(logged_user)
 
 
 if __name__ == "__main__":

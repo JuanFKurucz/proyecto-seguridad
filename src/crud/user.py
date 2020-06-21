@@ -39,14 +39,21 @@ def connect_user(username, password):
 
 
 def encrypt_user_file(user, path, key):
+    if not key:
+        print("Error: se debe ingresar una clave")
+        return
+    if not path:
+        print("Error: se debe ingresar una ruta de archivo")
+        return
+
     nonce, ciphertext, mac = encrypt_file(hash_md5(key).encode("utf8"), path)
-    if ciphertext:
-        user.files.append(
-            File(name=os.path.basename(path), encrypted_file=ciphertext, nonce=nonce, mac=mac)
-        )
-        db_session.commit()
-    else:
-        print("Error al encriptar el archivo")
+    if not ciphertext:
+        print("Error al encriptar el archivo, puede que el archivo que quiera encriptar este vacio")
+        return
+    user.files.append(
+        File(name=os.path.basename(path), encrypted_file=ciphertext, nonce=nonce, mac=mac)
+    )
+    db_session.commit()
 
 
 def decrypt_user_file(user, file_id, path, key):
@@ -61,6 +68,8 @@ def decrypt_user_file(user, file_id, path, key):
         )
     except NoResultFound:
         print("El archivo no existe")
+    except Exception:
+        print("Error inesperado")
 
 
 def check_token_user(user, token):
