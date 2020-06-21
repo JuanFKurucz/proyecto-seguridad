@@ -2,3 +2,4 @@ python-dotenv
 sqlalchemy
 pyopenssl
 alembic
+pycryptodome
