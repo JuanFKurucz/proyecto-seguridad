@@ -34,13 +34,11 @@ def encrypt_file(key, path):
 
 def decrypt_file(key, file: File, path_out):
     try:
-        with open(path_out, "wb") as file_out:
-            text = decrypt_text(
-                key=key, ciphertext=file.encrypted_file, nonce=file.nonce, mac=file.mac
-            )
-            if text:
+        text = decrypt_text(key=key, ciphertext=file.encrypted_file, nonce=file.nonce, mac=file.mac)
+        if text:
+            with open(path_out, "wb") as file_out:
                 file_out.write(text)
-            file_out.close()
+                file_out.close()
     except FileNotFoundError:
         print("No se encontro la ruta especificada")
 
