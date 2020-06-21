@@ -1,10 +1,9 @@
 import smtplib, ssl
 
+from src.utils.config import EMAIL_USERNAME, EMAIL_PASSWORD
+
 smtp_server = "smtp.gmail.com"
 port = 587
-sender_email = "simplebot80@gmail.com"
-password = "fabcaa97871555b68aa095335975e613"
-
 context = ssl.create_default_context()
 
 
@@ -29,9 +28,9 @@ def send_mail_login(receiver, code):
         server.ehlo()  # Can be omitted
         server.starttls(context=context)  # Secure the connection
         server.ehlo()  # Can be omitted
-        server.login(sender_email, password)
+        server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
         print(f"sending mail to {receiver_email}")
-        server.sendmail(sender_email, receiver_email, message)
+        server.sendmail(EMAIL_USERNAME, receiver_email, message)
     except Exception as e:
         # Print any error messages to stdout
         print(e)
