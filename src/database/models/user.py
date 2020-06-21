@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from sqlalchemy import Column, BigInteger, String
+from sqlalchemy import Column, BigInteger, String, Integer
 from sqlalchemy.orm import relationship
 
 from src.database.session import Base
@@ -18,6 +18,9 @@ class User(Base):
     usuario = Column(String, unique=True)
     email = Column(String, unique=True)
     hashed_password = Column(String)
+    login_token = Column(String)
+    login_token_expiration = Column(Integer)
+
     files = relationship("File")
 
     def check_password(self, password):

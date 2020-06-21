@@ -1,3 +1,5 @@
+import random, string
+
 import hashlib
 
 from src.utils.config import PASSWORD_SALT
@@ -17,3 +19,11 @@ def hash_pass(password):
 
 def compare_hash(hash_one, text):
     return hash_one == hash_pass(text)
+
+
+def generate_token():
+    return "".join(
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits)
+        for _ in range(4)
+    )
+

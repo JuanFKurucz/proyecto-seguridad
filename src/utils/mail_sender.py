@@ -11,15 +11,15 @@ def send_mail_login(receiver, code):
     receiver_email = receiver
     message = f"""Subject: Intento de Login
 
-       Hola, {receiver.split("@")[0]}
+       Hola, {receiver}
        
-       Hubo un intento de Login en nuestro sistem de encriptación.
+       Hubo un intento de Login en nuestro sistem de encriptacion.
 
-        Para realizar el Login de manera exitosa ingrese el siguiente código:
+       Para realizar el Login de manera exitosa ingrese el siguiente codigo:
 
        {code}
 
-       El código expirará en 5 minutos.
+       El codigo expirara en 5 minutos.
 
        Gracias ^^ ."""
 

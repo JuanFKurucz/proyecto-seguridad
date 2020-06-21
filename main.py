@@ -1,6 +1,12 @@
 import os
 
-from src.crud.user import create_user, connect_user, encrypt_user_file, decrypt_user_file
+from src.crud.user import (
+    create_user,
+    connect_user,
+    encrypt_user_file,
+    decrypt_user_file,
+    check_token_user,
+)
 
 
 def clear_screen():
@@ -44,7 +50,8 @@ def menu(logged_user=None):
             password = ask("Ingrese su contraseña")
             user = connect_user(username, password)
             if user:
-                return menu(user)
+                if check_token_user(user, ask("Ingrese el token de acceso enviado a su mail")):
+                    return menu(user)
             else:
                 print("Intento de conexion fallida")
         elif opcion == "2":

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 
 from src.database.models.user import User  # noqa
 from src.database.models.file import File  # noqa
@@ -8,7 +9,8 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.utils.cipher import encrypt_file, decrypt_file
 
-from src.utils.hash import hash_md5
+from src.utils.hash import hash_md5, generate_token
+from src.utils.mail_sender import send_mail_login
 
 
 def create_user(username, email, password):
@@ -26,6 +28,12 @@ def create_user(username, email, password):
 def connect_user(username, password):
     user = db_session.query(User).filter(User.usuario == username).first()
     if user and user.check_password(password=password):
+        user.login_token = str(generate_token())
+        user.login_token_expiration = (datetime.now() + timedelta(minutes=5)).timestamp()
+        db_session.add(user)
+        db_session.commit()
+        db_session.flush()
+        send_mail_login(str(user.email), user.login_token)
         return user
     return None
 
@@ -51,3 +59,15 @@ def decrypt_user_file(user, file_id, path, key):
     except NoResultFound:
         print("El archivo no existe")
 
+
+def check_token_user(user, token):
+    if user.login_token and user.login_token_expiration:
+        date = datetime.fromtimestamp(user.login_token_expiration)
+        if (date - datetime.now()).total_seconds() > 0:
+            if user.login_token == token:
+                return True
+            else:
+                print("Token invaldo")
+        else:
+            print("Token expirado")
+    return False
