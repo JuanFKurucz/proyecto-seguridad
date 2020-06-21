@@ -1,7 +1,5 @@
 from src.crud.user import create_user, connect_user
 
-from src.utils.cipher import encrypt_file, decrypt_file
-
 
 def ask(text):
     return input(f"{text}: \n")
@@ -15,9 +13,9 @@ def menu(logged_user=None):
             file_in = ask("Ingrese ruta del archivo actual")
             file_out = ask("Ingrese ruta del archivo nueva")
             if opcion == "1":
-                encrypt_file(file_in, file_out)
+                logged_user.encrypt_file(file_in, file_out)
             else:
-                decrypt_file(file_in, file_out)
+                logged_user.decrypt_file(file_in, file_out)
         elif opcion == "3":
             return menu(None)
     else:
