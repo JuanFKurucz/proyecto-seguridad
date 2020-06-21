@@ -1,4 +1,10 @@
-from src.crud.user import create_user, connect_user
+import os
+
+from src.crud.user import create_user, connect_user, encrypt_user_file, decrypt_user_file
+
+
+def clear_screen():
+    os.system("cls")
 
 
 def ask(text):
@@ -7,16 +13,28 @@ def ask(text):
 
 def menu(logged_user=None):
     if logged_user is not None:
-        print("=== Menu (Logged) ===")
-        opcion = ask("1 - Encriptar archivo\n2 - Desencriptar archivo\n3 - Desconectarse")
-        if opcion == "1" or opcion == "2":
-            file_in = ask("Ingrese ruta del archivo actual")
-            file_out = ask("Ingrese ruta del archivo nueva")
-            if opcion == "1":
-                logged_user.encrypt_file(file_in, file_out)
-            else:
-                logged_user.decrypt_file(file_in, file_out)
+        print(f"=== Menu (Logged as {logged_user.usuario}) ===")
+        opcion = ask(
+            "1 - Listar archivos encriptados\n2 - Encriptar archivo\n3 - Desencriptar archivo\n4 - Desconectarse"
+        )
+        if opcion == "1":
+            for file in logged_user.files:
+                print(f"{file.id} - {file.name}")
+            return menu(logged_user)
+        elif opcion == "2":
+            encrypt_user_file(
+                user=logged_user,
+                path=ask("Ingrese ruta del archivo"),
+                key=ask("Ingrese una clave de encriptacion"),
+            )
         elif opcion == "3":
+            decrypt_user_file(
+                user=logged_user,
+                file_id=ask("Ingrese id del archivo"),
+                key=ask("Ingrese una clave de encriptacion"),
+                path=ask("Ingrese ruta del archivo"),
+            )
+        elif opcion == "4":
             return menu(None)
     else:
         print("=== Menu (Not logged) ===")

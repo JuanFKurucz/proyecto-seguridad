@@ -1,38 +1,46 @@
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
+
+from src.database.models.file import File
 
 
 def encrypy_text(key, text):
-    cipher = AES.new(key, AES.MODE_CBC)
-    return cipher.iv, cipher.encrypt(pad(text, AES.block_size))
+    """ encrypts plaintext using 256-bit AES in GCM mode """
+    cipher = AES.new(key=key, mode=AES.MODE_GCM, mac_len=16)
+    ciphertext, mac = cipher.encrypt_and_digest(text)
+    return cipher.nonce, ciphertext, mac
 
 
-def decrypt_text(key, text, iv):
-    cipher = AES.new(key, AES.MODE_CBC, iv=iv)
-    return unpad(cipher.decrypt(text), AES.block_size)
-
-
-def encrypt_file(key, path_in, path_out):
+def decrypt_text(key: bytes, nonce: bytes, ciphertext: bytes, mac: bytes):
+    """ decrypts 256-bit AES encrypted ciphertext """
+    cipher = AES.new(key=key, nonce=nonce, mode=AES.MODE_GCM, mac_len=16)
     try:
-        with open(path_in, "rb") as file_in:
-            ciphered_iv, ciphered_data = encrypy_text(key=key, text=file_in.read())
-            with open(path_out, "wb") as file_out:
-                file_out.write(ciphered_iv)
-                file_out.write(ciphered_data)
-                file_out.close()
+        plaintext = cipher.decrypt_and_verify(ciphertext, mac)
+        return plaintext
+    except ValueError:
+        print("Error al desencriptar, clave no correcta")
+    return None
+
+
+def encrypt_file(key, path):
+    try:
+        with open(path, "rb") as file_in:
+            return encrypy_text(key=key, text=file_in.read())
     except FileNotFoundError:
         print("No se encontro la ruta especificada")
+    return None, None, None
 
 
-def decrypt_file(key, path_in, path_out):
+def decrypt_file(key, file: File, path_out):
     try:
-        with open(path_in, "rb") as file_in:
-            iv = file_in.read(16)
-            ciphered_data = file_in.read()
-            file_in.close()
-            with open(path_out, "wb") as file_out:
-                file_out.write(decrypt_text(key=key, text=ciphered_data, iv=iv))
-                file_out.close()
+        with open(path_out, "wb") as file_out:
+            text = decrypt_text(
+                key=key, ciphertext=file.encrypted_file, nonce=file.nonce, mac=file.mac
+            )
+            if text:
+                file_out.write()
+            file_out.close()
     except FileNotFoundError:
         print("No se encontro la ruta especificada")
 
