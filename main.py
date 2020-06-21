@@ -12,7 +12,7 @@ from src.utils.interface import TimeoutOccurred, ask, ask_password, clear_screen
 def menu(logged_user=None):
     try:
         if logged_user is not None:
-            print(f"=== Menu (Logged as {logged_user.usuario}) ===")
+            print(f"=== Menu (Logged as {logged_user.username}) ===")
             opcion = ask(
                 "1 - Listar archivos encriptados\n2 - Encriptar archivo\n3 - Desencriptar archivo\n4 - Desconectarse"
             )
@@ -27,12 +27,14 @@ def menu(logged_user=None):
                     key=ask_password("Ingrese una clave de encriptacion"),
                 )
             elif opcion == "3":
-                decrypt_user_file(
-                    user=logged_user,
-                    file_id=ask("Ingrese id del archivo"),
-                    key=ask_password("Ingrese una clave de encriptacion"),
-                    path=ask("Ingrese ruta del archivo"),
-                )
+                file_id = ask("Ingrese id del archivo")
+                if file_id:
+                    decrypt_user_file(
+                        user=logged_user,
+                        file_id=file_id,
+                        key=ask_password("Ingrese una clave de encriptacion"),
+                        path=ask("Ingrese ruta del archivo"),
+                    )
             elif opcion == "4":
                 return menu(None)
         else:
@@ -72,6 +74,8 @@ def menu(logged_user=None):
                     if validate_password(password):
                         if ask_password("Ingrese su contraseña denuevo") == password:
                             break
+                        else:
+                            print("Las contraseñas no son iguales")
                     else:
                         print("La contraseña no cumple con las politicas de seguridad")
                 user = create_user(username, email, password)

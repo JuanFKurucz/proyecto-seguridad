@@ -11,14 +11,14 @@ def hash_md5(text):
     return hash.hexdigest()
 
 
-def hash_pass(password):
+def hash_pass(username, password):
     hash = hashlib.sha256()
-    hash.update(f"{PASSWORD_SALT}{password}".encode("utf-8"))
+    hash.update(f"{PASSWORD_SALT}{password}{username}".encode("utf-8"))
     return hash.hexdigest()
 
 
-def compare_hash(hash_one, text):
-    return hash_one == hash_pass(text)
+def compare_hash(hash_one, username, password):
+    return hash_one == hash_pass(username, password)
 
 
 def generate_token():

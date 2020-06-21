@@ -39,7 +39,7 @@ def decrypt_file(key, file: File, path_out):
                 key=key, ciphertext=file.encrypted_file, nonce=file.nonce, mac=file.mac
             )
             if text:
-                file_out.write()
+                file_out.write(text)
             file_out.close()
     except FileNotFoundError:
         print("No se encontro la ruta especificada")

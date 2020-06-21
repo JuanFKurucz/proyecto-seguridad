@@ -14,7 +14,7 @@ from src.utils.mail_sender import send_mail_login
 
 
 def create_user(username, email, password):
-    user = User(usuario=username, email=email, hashed_password=hash_pass(password))
+    user = User(username=username, email=email, hashed_password=hash_pass(username, password))
     try:
         db_session.add(user)
         db_session.commit()
@@ -26,7 +26,7 @@ def create_user(username, email, password):
 
 
 def connect_user(username, password):
-    user = db_session.query(User).filter(User.usuario == username).first()
+    user = db_session.query(User).filter(User.username == username).first()
     if user and user.check_password(password=password):
         user.login_token = str(generate_token())
         user.login_token_expiration = (datetime.now() + timedelta(minutes=5)).timestamp()
@@ -50,6 +50,9 @@ def encrypt_user_file(user, path, key):
 
 
 def decrypt_user_file(user, file_id, path, key):
+    if not path:
+        print("No se especifico una ruta de archivo para guadar")
+        return
     try:
         decrypt_file(
             hash_md5(key).encode("utf8"),

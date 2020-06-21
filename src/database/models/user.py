@@ -15,7 +15,7 @@ from src.utils.hash import hash_md5
 
 class User(Base):
     id = Column(BigInteger, primary_key=True, index=True, default=lambda: uuid.uuid4().hex)
-    usuario = Column(String, unique=True)
+    username = Column(String, unique=True)
     email = Column(String, unique=True)
     hashed_password = Column(String)
     login_token = Column(String)
@@ -24,4 +24,4 @@ class User(Base):
     files = relationship("File")
 
     def check_password(self, password):
-        return compare_hash(self.hashed_password, password)
+        return compare_hash(self.hashed_password, self.username, password)
