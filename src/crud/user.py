@@ -1,6 +1,6 @@
 from src.database.models.user import User  # noqa
 from src.database.session import db_session  # noqa
-from src.utils.security import hash_pass
+from src.utils.hash import hash_pass
 
 
 def create_user(username, email, password):

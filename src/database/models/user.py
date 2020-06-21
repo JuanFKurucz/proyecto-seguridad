@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 
 from src.database.session import Base
 
-from src.utils.security import compare_hash
+from src.utils.hash import compare_hash
 
 
 class User(Base):

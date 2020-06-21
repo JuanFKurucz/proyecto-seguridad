@@ -4,13 +4,21 @@ from Crypto.Util.Padding import pad, unpad
 from src.utils.config import CIPHER_KEY
 
 
+def encrypy_text(key, text):
+    cipher = AES.new(key, AES.MODE_CBC)
+    return cipher.iv, cipher.encrypt(pad(text, AES.block_size))
+
+
+def decrypt_text(key, text, iv):
+    cipher = AES.new(key, AES.MODE_CBC, iv=iv)
+    return unpad(cipher.decrypt(text), AES.block_size)
+
+
 def encrypt_file(current_path, output_path):
     with open(current_path, "rb") as file_in:
-        data = file_in.read()
-        cipher = AES.new(CIPHER_KEY, AES.MODE_CBC)
-        ciphered_data = cipher.encrypt(pad(data, AES.block_size))
+        ciphered_iv, ciphered_data = encrypy_text(key=CIPHER_KEY, text=file_in.read())
         with open(output_path, "wb") as file_out:
-            file_out.write(cipher.iv)
+            file_out.write(ciphered_iv)
             file_out.write(ciphered_data)
             file_out.close()
 
@@ -20,11 +28,7 @@ def decrypt_file(current_path, output_path):
         iv = file_in.read(16)
         ciphered_data = file_in.read()
         file_in.close()
-
-        cipher = AES.new(CIPHER_KEY, AES.MODE_CBC, iv=iv)
-        original_data = unpad(cipher.decrypt(ciphered_data), AES.block_size)
         with open(output_path, "wb") as file_out:
-            file_out.write(original_data)
+            file_out.write(decrypt_text(key=CIPHER_KEY, text=ciphered_data, iv=iv))
             file_out.close()
-
 
