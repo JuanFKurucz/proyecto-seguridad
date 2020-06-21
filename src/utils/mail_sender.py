@@ -29,7 +29,7 @@ def send_mail_login(receiver, code):
         server.starttls(context=context)  # Secure the connection
         server.ehlo()  # Can be omitted
         server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
-        print(f"Enviando token de conexion a {receiver_email}")
+        print(f"Enviando token de conexion al mail del usuario")
         server.sendmail(EMAIL_USERNAME, receiver_email, message)
     except Exception as e:
         # Print any error messages to stdout
