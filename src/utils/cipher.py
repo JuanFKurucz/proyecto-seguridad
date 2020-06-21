@@ -15,20 +15,26 @@ def decrypt_text(key, text, iv):
 
 
 def encrypt_file(current_path, output_path):
-    with open(current_path, "rb") as file_in:
-        ciphered_iv, ciphered_data = encrypy_text(key=CIPHER_KEY, text=file_in.read())
-        with open(output_path, "wb") as file_out:
-            file_out.write(ciphered_iv)
-            file_out.write(ciphered_data)
-            file_out.close()
+    try:
+        with open(current_path, "rb") as file_in:
+            ciphered_iv, ciphered_data = encrypy_text(key=CIPHER_KEY, text=file_in.read())
+            with open(output_path, "wb") as file_out:
+                file_out.write(ciphered_iv)
+                file_out.write(ciphered_data)
+                file_out.close()
+    except FileNotFoundError:
+        print("No se encontro la ruta especificada")
 
 
 def decrypt_file(current_path, output_path):
-    with open(current_path, "rb") as file_in:
-        iv = file_in.read(16)
-        ciphered_data = file_in.read()
-        file_in.close()
-        with open(output_path, "wb") as file_out:
-            file_out.write(decrypt_text(key=CIPHER_KEY, text=ciphered_data, iv=iv))
-            file_out.close()
+    try:
+        with open(current_path, "rb") as file_in:
+            iv = file_in.read(16)
+            ciphered_data = file_in.read()
+            file_in.close()
+            with open(output_path, "wb") as file_out:
+                file_out.write(decrypt_text(key=CIPHER_KEY, text=ciphered_data, iv=iv))
+                file_out.close()
+    except FileNotFoundError:
+        print("No se encontro la ruta especificada")
 

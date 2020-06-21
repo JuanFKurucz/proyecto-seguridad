@@ -1,5 +1,7 @@
 from src.crud.user import create_user, connect_user
 
+from src.utils.cipher import encrypt_file, decrypt_file
+
 
 def ask(text):
     return input(f"{text}: \n")
@@ -8,10 +10,19 @@ def ask(text):
 def menu(logged_user=None):
     if logged_user is not None:
         print("=== Menu (Logged) ===")
-        opcion = ask(" - ")
+        opcion = ask("1 - Encriptar archivo\n2 - Desencriptar archivo\n3 - Desconectarse")
+        if opcion == "1" or opcion == "2":
+            file_in = ask("Ingrese ruta del archivo actual")
+            file_out = ask("Ingrese ruta del archivo nueva")
+            if opcion == "1":
+                encrypt_file(file_in, file_out)
+            else:
+                decrypt_file(file_in, file_out)
+        elif opcion == "3":
+            return menu(None)
     else:
         print("=== Menu (Not logged) ===")
-        opcion = ask("1 - Conectarse\n2 - Registrarse")
+        opcion = ask("1 - Conectarse\n2 - Registrarse\n3 - Salir")
         if opcion == "1":
             username = ask("Ingrese su usuario")
             password = ask("Ingrese su contraseña")
@@ -33,6 +44,8 @@ def menu(logged_user=None):
                 return menu(user)
             else:
                 print("Intento de registro fallido")
+        elif opcion == "3":
+            quit()
     return menu(logged_user)
 
 
