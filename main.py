@@ -9,6 +9,30 @@ from src.utils.policies import validate_email, validate_password
 from src.utils.interface import TimeoutOccurred, ask, ask_password, clear_screen
 
 
+def prompt_password(text):
+    print(
+        f"""
+    La {text} debe tener:
+    - Un largo de 8 a 32 caracteres
+    - 2 letras en mayuscula
+    - 1 caracter especial !@#$&*
+    - 2 numerales 0-9
+    - 3 letras en minuscula
+    """
+    )
+    password = None
+    while True:
+        password = ask_password(f"Ingrese una {text}")
+        if validate_password(password):
+            if ask_password(f"Ingrese la {text} denuevo") == password:
+                break
+            else:
+                print("Debe ingresar la misma clave")
+        else:
+            print(f"La {text} no cumple con las politicas de seguridad")
+    return password
+
+
 def menu(logged_user=None):
     try:
         if logged_user is not None:
@@ -24,7 +48,7 @@ def menu(logged_user=None):
                 encrypt_user_file(
                     user=logged_user,
                     path=ask("Ingrese ruta del archivo"),
-                    key=ask_password("Ingrese una clave de encriptacion"),
+                    key=prompt_password("clave de encriptacion"),
                 )
             elif opcion == "3":
                 file_id = ask("Ingrese id del archivo")
@@ -58,26 +82,7 @@ def menu(logged_user=None):
                         break
                     else:
                         print("El email no es valido")
-                print(
-                    """
-    La contraseña debe tener:
-    - Un largo de 8 a 32 caracteres
-    - 2 letras en mayuscula
-    - 1 caracter especial !@#$&*
-    - 2 numerales 0-9
-    - 3 letras en minuscula
-    """
-                )
-                password = None
-                while True:
-                    password = ask_password("Ingrese su contraseña")
-                    if validate_password(password):
-                        if ask_password("Ingrese su contraseña denuevo") == password:
-                            break
-                        else:
-                            print("Las contraseñas no son iguales")
-                    else:
-                        print("La contraseña no cumple con las politicas de seguridad")
+                password = prompt_password("contraseña")
                 user = create_user(username, email, password)
                 if user:
                     return menu(user)
